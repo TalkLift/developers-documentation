@@ -1,15 +1,13 @@
 ---
-title: API Reference
+title: TalkLift Developers API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
-  - ruby
-  - python
-  - javascript
+  - json
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/lord/slate'>Documentation Powered by Slate</a>
+  - <a href='https://app.talklift.com/accounts/signup/' target="_blank">Sign Up for a Developer Key</a>
+  - <a href='https://github.com/lord/slate' target="_blank">Documentation Powered by Slate</a>
 
 includes:
   - errors
@@ -19,53 +17,40 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+TalkLift uses Webhooks and REST API to communicate between systems. From your [TalkLift Account](https://app.talklift.com) you can configure your application backend to receive various EVENTS sent when users:
 
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+  - Reach a SLOT
+  - Complete a MODULE
 
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
+
+# How to Setup Webhook
+
+Login to your [account](https://app.talklift.com) and select the project you would like to work with.
+
+Navigate to the **integrations** setting. Under the Webhook section, set your endpoint url and basic auth details if available.
+
+![Webhook Setup Form](images/webhook-setting-form.png)
 
 # Authentication
 
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
+> TalkLift API uses token authentication. To authenticate your API, send your request with the Authorization header.
 
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+curl "https://app.talklift.com/api/v1/api-resource/" 
+  -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
 ```
 
-```javascript
-const kittn = require('kittn');
+> Make sure to replace `9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b` with your API Token.
 
-let api = kittn.authorize('meowmeowmeow');
-```
+You can access your API Token from your account under your [profile's](https://app.talklift.com/profile/#api-token]) API section.
 
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+`Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b`
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+You must replace <code>9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</code> with your personal API token.
 </aside>
 
-# Kittens
+# Webhooks Workflow
 
 ## Get All Kittens
 
