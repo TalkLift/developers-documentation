@@ -19,8 +19,8 @@ search: true
 
 TalkLift uses Webhooks and REST API to communicate between systems. From your [TalkLift Account](https://app.talklift.com) you can configure your application backend to receive various EVENTS sent when users:
 
-  - Reach a SLOT
-  - Complete a MODULE
+  - Reaches a [SLOT](/#webhook-on-slot-filling)
+  - Completes a [MODULE](/#webhook-when-user-completes-module)
 
 
 # How to Setup Webhook
@@ -52,9 +52,28 @@ You must replace <code>9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</code> with your
 
 # Webhooks Workflow
 
-## Summary Diagram
+## How it works
 
 ![Webhooks Summary Diagram](images/talklift-webhook-flow.png)
+
+## Webhook On Slot Filling
+
+Slots are used to collect users information e.g KYC details. Think of slots just like forms that 
+the users need to fill as part of an application to accomplish the set goals. During the slot filling 
+process, you might want to validate users information through an external endpoint and revert to the users based on your findings.
+
+### Slot filling use cases examples
+
+  - Validating user membership number through a third party API
+  - Check if user provided input is valid e.g supported delivery location for e-commerce delivery
+  - Save provided information before the user completes the rest of the questions
+  - Authenticate the user through a third party OTP
+
+### How to set a Slot Filling Webhook
+
+From your module, click xxx
+
+## Webhook When User Completes Module
 
 ## Get All Kittens
 
