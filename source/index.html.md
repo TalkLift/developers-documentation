@@ -52,6 +52,10 @@ You must replace <code>9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</code> with your
 
 # Webhooks Workflow
 
+## Summary Diagram
+
+![Webhooks Summary Diagram](images/talklift-webhook-flow.png)
+
 ## Get All Kittens
 
 ```ruby
