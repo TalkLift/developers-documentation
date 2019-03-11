@@ -73,6 +73,11 @@ process, you might want to validate users information through an external endpoi
 
 From your module, click xxx
 
+![Slot Filling Part A](slot-filling-part-a.png "Select field input to send")
+
+
+![Slot Filling Part B](slot-filling-part-b.png "Configure 'Validate with Webhook'")
+
 ## Webhook When User Completes Module
 
 ## Get All Kittens
