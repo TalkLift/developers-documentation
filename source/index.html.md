@@ -56,7 +56,7 @@ Login to your [account](https://app.talklift.com) and select the project you wou
 
 Navigate to the **integrations** setting. Under the Webhook section, set your endpoint url and basic auth details if available.
 
-![Webhook Setup Form](images/webhook-setting-form.png
+![Webhook Setup Form](images/webhook-setting-form.png)
 
 
 ## How it Works
