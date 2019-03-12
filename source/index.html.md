@@ -85,7 +85,8 @@ Here is a sample payload sent to your endpoint on a slot filling event
 
 > Sample slot filling payload
 
-```shell{  
+```shell
+{  
    "event_name":"SLOT-MODULE:Make a claim",
    "payload":[  
       {  
@@ -187,6 +188,37 @@ slot_label|Slot field label for your reference
 This webhook request is fired when the user chats with your bot and completes the module. Remember, a module can contain general responses and/or slots (KYC request). An event is fired when the user provides a final response.
 
 ![Webhook when user completes module](images/webhook-request-module-end.png)
+
+> Sample slot filling payload when a module conversation is completed
+
+```shell
+{  
+   "event_name":"Policy renewal",
+   "payload":[  
+      {  
+         "id":5111,
+         "slot_states":[  
+            {  
+               "id":764210,
+               "story_state":5111,
+               "slot":57981,
+               "order":0,
+               "is_done":true,
+               "waiting_response":false,
+               "data":"ncsp/ik/2018/081463",
+               "slot_label":"Please enter your policy number",
+            }
+         ],
+         "created_at":"2019-02-26T19:05:45.224084+03:00",
+         "updated_at":"2019-03-11T16:45:46.652175+03:00",
+         "session":5849801,
+         "story":14301,
+         "project":1,
+         "org":900
+      }
+   ]
+}
+```
 
 ## Get All Kittens
 
