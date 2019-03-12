@@ -16,21 +16,29 @@ search: true
 
 # Introduction
 
-TalkLift uses Webhooks and REST API to communicate between systems. From your [TalkLift Account](https://app.talklift.com) you can configure your application backend to receive various EVENTS sent when users:
+TalkLift uses **Webhooks and REST API** to communicate between systems. From your [TalkLift Account](https://app.talklift.com) you can configure your application backend to receive various **EVENTS** sent when users:
 
   - Reaches a [SLOT](/#webhook-on-slot-filling)
   - Completes a [MODULE](/#webhook-when-user-completes-module)
 
 
-# How to Setup Webhook
-
-Login to your [account](https://app.talklift.com) and select the project you would like to work with.
-
-Navigate to the **integrations** setting. Under the Webhook section, set your endpoint url and basic auth details if available.
-
-![Webhook Setup Form](images/webhook-setting-form.png)
-
 # Authentication
+
+To access your API Token, send a **POST** request with your **email** and **password** as request payloads.
+
+<aside class="notice">
+Token retrival endpoint: https://app.talklift.com/api-token-auth/`
+</aside>
+
+```shell
+curl X POST "https://app.talklift.com/api-token-auth/" 
+  -H "Content-Type: application/json"
+  -d '{"username":"name@example.com", "password":"xxx"}'
+
+# Response
+{ 'token' : '9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' }
+```
+> Note: **username** field is used in place of email field.
 
 > TalkLift API uses token authentication. To authenticate your API, send your request with the Authorization header.
 
@@ -41,13 +49,15 @@ curl "https://app.talklift.com/api/v1/api-resource/"
 
 > Make sure to replace `9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b` with your API Token.
 
-You can access your API Token from your account under your [profile's](https://app.talklift.com/profile/#api-token]) API section.
 
-`Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b`
+# How to Setup Webhook
 
-<aside class="notice">
-You must replace <code>9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</code> with your personal API token.
-</aside>
+Login to your [account](https://app.talklift.com) and select the project you would like to work with.
+
+Navigate to the **integrations** setting. Under the Webhook section, set your endpoint url and basic auth details if available.
+
+![Webhook Setup Form](images/webhook-setting-form.png
+
 
 # Webhooks Workflow
 
@@ -219,174 +229,21 @@ This webhook request is fired when the user chats with your bot and completes th
    ]
 }
 ```
+### Fields descriptions
 
-## Get All Kittens
+Field|Description
+-----|-----------
+event_name|Event identifier. Note event name is derived from the **module name**.
+payload|The actual payload data being sent.
+payload.slot_states|A list of all slot states. What the users have actually filled.
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
-
+### Slot States schema description
+Field|Description
+-----|-----------
+id|Slot state id
+slot|Link to payload.slot
+order|Order of which the slot should be filled
+is_done|Complete status
+waiting_response|Flag to check if slot is waiting for user input
+data|The actual data that the user provided. Example in this case is the email, membership number etc. Show the actual value that was added
+slot_label|Slot field label for your reference
