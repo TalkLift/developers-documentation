@@ -17,8 +17,8 @@ search: true
 
 TalkLift uses **Webhooks and REST API** to communicate between systems. From your [TalkLift Account](https://app.talklift.com) you can configure your application backend to receive various **EVENTS** sent when users:
 
-  - Reaches a [SLOT](/#webhook-on-slot-filling)
-  - Completes a [MODULE](/#webhook-when-user-completes-module)
+  - Completes a [MODULE](/#general-webhook)
+  - Reaches a [SLOT](/#slot-filling-webhook)
 
 
 # Authentication
