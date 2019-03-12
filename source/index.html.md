@@ -3,7 +3,6 @@ title: TalkLift Developers API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
-  - json
 
 toc_footers:
   - <a href='https://app.talklift.com/accounts/signup/' target="_blank">Sign Up for a Developer Key</a>
@@ -71,14 +70,123 @@ process, you might want to validate users information through an external endpoi
 
 ### How to set a Slot Filling Webhook
 
-From your module, click xxx
+From your module, click *Ask for customer information* as shown in the figure below. The collected information are collected through what we call slots. Think of them as form fields with different types e.g email, number etc. Users will be asked to provide the information and in the order set. 
 
-![Slot Filling Part A](slot-filling-part-a.png "Select field input to send")
+After setting your slot, click on the edit button to open the advance option where you can set the webhook request. Set 'Validate with Webhook' to trigger a webhook event when the user fills the slot.
+
+![Slot Filling Part A](images/slot-filling-part-a.png "Select field input to send")
 
 
-![Slot Filling Part B](slot-filling-part-b.png "Configure 'Validate with Webhook'")
+![Slot Filling Part B](images/slot-filling-part-b.png "Configure 'Validate with Webhook'")
 
+<aside class="notice">
+Here is a sample payload sent to your endpoint on a slot filling event
+</aside>
+
+> Sample slot filling payload
+
+```shell{  
+   "event_name":"SLOT-MODULE:Make a claim",
+   "payload":[  
+      {  
+         "slot":{  
+            "id":3442,
+            "label":"Membership Number",
+            "field_type":"TEXT",
+            "choice_options":"",
+            "validation_regex":"",
+            "validation_message":"Please enter a valid membership number",
+            "validate_with_webhook":true,
+            "show_condition":"",
+            "show_condition_value":"",
+            "date_gte_today":false,
+            "order":3,
+            "created_at":"2019-03-07T17:46:28.479306+03:00",
+            "updated_at":"2019-03-07T17:46:28.479366+03:00"
+         },
+         "value":"209192092",
+         "session":58521,
+         "project":1,
+         "org":900,
+         "slot_state":{  
+            "id":917,
+            "slot_states":[  
+               {  
+                  "id":6976,
+                  "story_state":917,
+                  "slot":5444,
+                  "order":1,
+                  "is_done":true,
+                  "waiting_response":false,
+                  "data":"Mr Awesome Customer",
+                  "slot_label":"Let's start with your Full Name (Please include your prefix  (e.g. Mr/Mrs/Ms/ Chief/ Dr etc."
+               },
+               {  
+                  "id":6980,
+                  "story_state":917,
+                  "slot":3442,
+                  "order":2,
+                  "is_done":true,
+                  "waiting_response":false,
+                  "data":"username@gmail.com",
+                  "slot_label":"Email Address"
+               },
+               {  
+                  "id":6981,
+                  "story_state":917,
+                  "slot":3442,
+                  "order":3,
+                  "is_done":false,
+                  "waiting_response":true,
+                  "data":null,
+                  "slot_label":"Membership Number"
+               }
+            ],
+            "created_at":"2019-02-27T11:46:25.133162+03:00",
+            "updated_at":"2019-03-07T17:52:38.144156+03:00",
+            "session":58521,
+            "story":1220,
+            "project":1,
+            "org":900
+         }
+      }
+   ]
+}
+```
+
+### Fields descriptions
+
+Field|Description
+-----|-----------
+event_name|Event identifier. Note it is prefixed with **SLOT-MODULE**: before the module name.
+payload|The actual payload data being sent.
+payload.slot|The current slot/field under review.
+payload.slot_state|List of all slots available in the module. Show how users have filled the slots.
+payload.value|User input for the slot.Used to trigger the event. Use this at your endpoint to process.
+payload.session|User session id.
+payload.project|Your project id.
+payload.org|Your organization/business id.
+
+### Slot States schema description
+
+This is basically a log of user input in filling the slots. It shows the progress of the user in 
+the slot filling.
+
+Field|Description
+-----|-----------
+id|Slot state id
+slot|Link to payload.slot
+order|Order of which the slot should be filled
+is_done|Complete status
+waiting_response|Flag to check if slot is waiting for user input
+data|The actual data that the user provided. Example in this case is the email, membership number etc. Show the actual value that was added
+slot_label|Slot field label for your reference
+ 
 ## Webhook When User Completes Module
+
+This webhook request is fired when the user chats with your bot and completes the module. Remember, a module can contain general responses and/or slots (KYC request). An event is fired when the user provides a final response.
+
+![Webhook when user completes module](images/webhook-request-module-end.png)
 
 ## Get All Kittens
 
