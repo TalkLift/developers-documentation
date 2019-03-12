@@ -5,8 +5,7 @@ language_tabs: # must be one of https://git.io/vQNgJ
   - shell
 
 toc_footers:
-  - <a href='https://app.talklift.com/accounts/signup/' target="_blank">Sign Up for a Developer Key</a>
-  - <a href='https://github.com/lord/slate' target="_blank">Documentation Powered by Slate</a>
+  - <a href='https://app.talklift.com/accounts/signup/' target="_blank">Need an account? Sign up here.</a>
 
 includes:
   - errors
@@ -60,13 +59,68 @@ Navigate to the **integrations** setting. Under the Webhook section, set your en
 ![Webhook Setup Form](images/webhook-setting-form.png
 
 
-# Webhooks Workflow
-
-## How it works
+## How it Works
 
 ![Webhooks Summary Diagram](images/talklift-webhook-flow.png)
 
-## Webhook On Slot Filling
+## General Webhook
+> Sample slot filling payload when a module conversation is completed
+
+```shell
+{  
+   "event_name":"Policy renewal",
+   "payload":[  
+      {  
+         "id":5111,
+         "slot_states":[  
+            {  
+               "id":764210,
+               "story_state":5111,
+               "slot":57981,
+               "order":0,
+               "is_done":true,
+               "waiting_response":false,
+               "data":"ncsp/ik/2018/081463",
+               "slot_label":"Please enter your policy number",
+            }
+         ],
+         "created_at":"2019-02-26T19:05:45.224084+03:00",
+         "updated_at":"2019-03-11T16:45:46.652175+03:00",
+         "session":5849801,
+         "story":14301,
+         "project":1,
+         "org":900
+      }
+   ]
+}
+```
+
+This webhook request is fired when the user chats with your bot and completes the module. Remember, a module can contain general responses and/or slots (KYC request). An event is fired when the user provides a final response.
+
+![Webhook when user completes module](images/webhook-request-module-end.png)
+
+
+### Fields descriptions
+
+Field|Description
+-----|-----------
+event_name|Event identifier. Note event name is derived from the **module name**.
+payload|The actual payload data being sent.
+payload.slot_states|A list of all slot states. What the users have actually filled.
+
+### Slot States schema description
+Field|Description
+-----|-----------
+id|Slot state id
+slot|Link to payload.slot
+order|Order of which the slot should be filled
+is_done|Complete status
+waiting_response|Flag to check if slot is waiting for user input
+data|The actual data that the user provided. Example in this case is the email, membership number etc. Show the actual value that was added
+slot_label|Slot field label for your reference
+
+
+## Slot Filling Webhook
 
 Slots are used to collect users information e.g KYC details. Think of slots just like forms that 
 the users need to fill as part of an application to accomplish the set goals. During the slot filling 
@@ -193,69 +247,37 @@ is_done|Complete status
 waiting_response|Flag to check if slot is waiting for user input
 data|The actual data that the user provided. Example in this case is the email, membership number etc. Show the actual value that was added
 slot_label|Slot field label for your reference
- 
-## Webhook When User Completes Module
-> Sample slot filling payload when a module conversation is completed
+
+## Sending Slot Feedback
 
 ```shell
-{  
-   "event_name":"Policy renewal",
-   "payload":[  
-      {  
-         "id":5111,
-         "slot_states":[  
-            {  
-               "id":764210,
-               "story_state":5111,
-               "slot":57981,
-               "order":0,
-               "is_done":true,
-               "waiting_response":false,
-               "data":"ncsp/ik/2018/081463",
-               "slot_label":"Please enter your policy number",
-            }
-         ],
-         "created_at":"2019-02-26T19:05:45.224084+03:00",
-         "updated_at":"2019-03-11T16:45:46.652175+03:00",
-         "session":5849801,
-         "story":14301,
-         "project":1,
-         "org":900
-      }
-   ]
-}
+curl X POST 'https://app.talklift.com/api/v1/session-slot-states/update_from_webhook/'
+  -H 'Content-Type: application/json' 
+  -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
+  -d '{  
+      "id":6981,
+      "story_state":917,
+      "slot":3442,
+      "order":3,
+      "is_done":false,
+      "waiting_response":true,
+      "data":"209192092",
+      "slot_label":"Membership Number",
+      "project":1,
+      "org":900
+    }'
 ```
 
-This webhook request is fired when the user chats with your bot and completes the module. Remember, a module can contain general responses and/or slots (KYC request). An event is fired when the user provides a final response.
-
-![Webhook when user completes module](images/webhook-request-module-end.png)
-
-
-### Fields descriptions
-
-Field|Description
------|-----------
-event_name|Event identifier. Note event name is derived from the **module name**.
-payload|The actual payload data being sent.
-payload.slot_states|A list of all slot states. What the users have actually filled.
-
-### Slot States schema description
-Field|Description
------|-----------
-id|Slot state id
-slot|Link to payload.slot
-order|Order of which the slot should be filled
-is_done|Complete status
-waiting_response|Flag to check if slot is waiting for user input
-data|The actual data that the user provided. Example in this case is the email, membership number etc. Show the actual value that was added
-slot_label|Slot field label for your reference
+Slot filling request help in marking the item as done and the system automatically moves the user to the next slot. On succesful validation, use this to update the user session state as done and move to the next session state.
+ 
 
 # Sending Message
 
-After processing your webhook request, you might want to send a message back to the user. Incase of a webhook validation, it will be necessary to send back your webhook request with the slot details to fill in the spot and mark it as complete. The following **POST** requests examples demostrate how you can accomplish the above.
+After processing your webhook request, you might want to send a message back to the user. The following **POST** requests examples demostrate how you can accomplish the above.
 
 ## Sending a general message
-This is a general feedback message. 
+
+Use this to send a message back to your chatbot user.
 
 > Sample message payload
 
@@ -272,7 +294,7 @@ Field|Description
 -----|-----------
 session_id|Target user session id. To be retrieved from sent event data
 channel|Available options: MESSENGER, WEB
-sender|Value: BOT
+sender|Default value: BOT
 text|Text message you are sending
 buttons|Buttons array. See buttons field below for possible fields
 org_id|Your organization id
@@ -285,8 +307,3 @@ type|Button field type. Options:postback,web_url
 title|Button title
 url|Optional valid web url value for type web_url
 payload|Optional payload for type postback
-
-
-## Sending a slot filling request
-
-Slot filling request help in marking the item as done and the system automatically moves the user to the next slot.
