@@ -24,12 +24,6 @@ TalkLift uses **Webhooks and REST API** to communicate between systems. From you
 
 # Authentication
 
-To access your API Token, send a **POST** request with your **email** and **password** as request payloads.
-
-<aside class="notice">
-Token retrival endpoint: https://app.talklift.com/api-token-auth/`
-</aside>
-
 ```shell
 curl X POST "https://app.talklift.com/api-token-auth/" 
   -H "Content-Type: application/json"
@@ -40,15 +34,22 @@ curl X POST "https://app.talklift.com/api-token-auth/"
 ```
 > Note: **username** field is used in place of email field.
 
-> TalkLift API uses token authentication. To authenticate your API, send your request with the Authorization header.
+To access your API Token, send a **POST** request with your **email** and **password** as request payload.
+
+<aside class="notice">
+Token retrival endpoint: https://app.talklift.com/api-token-auth/
+</aside>
+
+TalkLift API uses token authentication. To authenticate your API, send your request with the Authorization header.
 
 ```shell
 curl "https://app.talklift.com/api/v1/api-resource/" 
   -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
 ```
 
-> Make sure to replace `9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b` with your API Token.
-
+<aside class="notice">
+Make sure to replace `9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b` with your API Token.
+</aside>
 
 # How to Setup Webhook
 
@@ -80,7 +81,7 @@ process, you might want to validate users information through an external endpoi
 
 ### How to set a Slot Filling Webhook
 
-From your module, click *Ask for customer information* as shown in the figure below. The collected information are collected through what we call slots. Think of them as form fields with different types e.g email, number etc. Users will be asked to provide the information and in the order set. 
+From your module, click ***Ask for customer information*** as shown in the figure below. The collected information are collected through what we call slots. Think of them as form fields with different types e.g email, number etc. Users will be asked to provide the information and in the order set. 
 
 After setting your slot, click on the edit button to open the advance option where you can set the webhook request. Set 'Validate with Webhook' to trigger a webhook event when the user fills the slot.
 
@@ -194,11 +195,6 @@ data|The actual data that the user provided. Example in this case is the email, 
 slot_label|Slot field label for your reference
  
 ## Webhook When User Completes Module
-
-This webhook request is fired when the user chats with your bot and completes the module. Remember, a module can contain general responses and/or slots (KYC request). An event is fired when the user provides a final response.
-
-![Webhook when user completes module](images/webhook-request-module-end.png)
-
 > Sample slot filling payload when a module conversation is completed
 
 ```shell
@@ -229,6 +225,12 @@ This webhook request is fired when the user chats with your bot and completes th
    ]
 }
 ```
+
+This webhook request is fired when the user chats with your bot and completes the module. Remember, a module can contain general responses and/or slots (KYC request). An event is fired when the user provides a final response.
+
+![Webhook when user completes module](images/webhook-request-module-end.png)
+
+
 ### Fields descriptions
 
 Field|Description
@@ -247,3 +249,44 @@ is_done|Complete status
 waiting_response|Flag to check if slot is waiting for user input
 data|The actual data that the user provided. Example in this case is the email, membership number etc. Show the actual value that was added
 slot_label|Slot field label for your reference
+
+# Sending Message
+
+After processing your webhook request, you might want to send a message back to the user. Incase of a webhook validation, it will be necessary to send back your webhook request with the slot details to fill in the spot and mark it as complete. The following **POST** requests examples demostrate how you can accomplish the above.
+
+## Sending a general message
+This is a general feedback message. 
+
+> Sample message payload
+
+```shell
+curl X POST 'https://app.talklift.com/api/v1/sessions/send_message/'
+  -H 'Content-Type: application/json' 
+  -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
+  -d '{"session_id":29289,"channel":"MESSENGER","sender":"BOT", "text":"The message to send", "org_id":22121,"project_id":2022, "buttons":[{"type": "postback","title": "Back to menu","payload": "main-menu"}]}'
+```
+
+### Message request fields description
+
+Field|Description
+-----|-----------
+session_id|Target user session id. To be retrieved from sent event data
+channel|Available options: MESSENGER, WEB
+sender|Value: BOT
+text|Text message you are sending
+buttons|Buttons array. See buttons field below for possible fields
+org_id|Your organization id
+project_id|Your project id
+
+### Buttons fields description
+Field|Description
+-----|-----------
+type|Button field type. Options:postback,web_url
+title|Button title
+url|Optional valid web url value for type web_url
+payload|Optional payload for type postback
+
+
+## Sending a slot filling request
+
+Slot filling request help in marking the item as done and the system automatically moves the user to the next slot.
